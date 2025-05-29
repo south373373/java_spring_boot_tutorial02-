@@ -1,9 +1,9 @@
-package com.example.spring_tutorial02.Service;
+package com.example.spring_tutorial02.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
-import com.example.springtutorial.entity.User;
-import com.example.springtutorial.repository.UserRepository;
+import com.example.spring_tutorial02.entity.User;
+import com.example.spring_tutorial02.repository.UserRepository;
 
 @Service
 public class UserService {
@@ -23,7 +23,7 @@ public class UserService {
 
         // ユーザー名の重複チェック（完全一致はNG）
         if(!userRepository.findByUserName(userName).isEmpty()){
-            throw new IllegalArgumentException("そのユーザー名は既に使用されています。")
+            throw new IllegalArgumentException("そのユーザー名は既に使用されています。");
         }
 
         // ユーザー登録用のエンティティを作成
