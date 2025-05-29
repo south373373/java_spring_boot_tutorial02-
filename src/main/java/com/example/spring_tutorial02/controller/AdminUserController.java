@@ -2,8 +2,11 @@ package com.example.spring_tutorial02.controller;
 
 import java.util.List;
 
+import org.springframework.core.Conventions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -40,10 +43,18 @@ public class AdminUserController {
 
     @PostMapping("/register")
     public String registerUser(RedirectAttributes redirectAttributes,
-        UserRegisterForm form){
+        @Validated UserRegisterForm form, BindingResult result){
+        // UserRegisterForm form){
+
+        if(result.hasErrors()){
+            redirectAttributes.addFlashAttribute("userRegisterForm", form);
+            redirectAttributes.addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + Conventions.getVariableName(form), result);
+
+            return "redirect:/adminuser";
+        }
 
         try{
-            userService.createUser(form.userName(), form.password, form.roleId);
+            userService.createUser(form.getUserName(), form.getPassword(), form.getRoleId());
             // userService.createUser(userName, password, roleId);
 
             redirectAttributes.addFlashAttribute("successMessage", "ユーザー登録が完了しました");
