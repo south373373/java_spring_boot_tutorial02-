@@ -6,11 +6,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.spring_tutorial02.entity.User;
 import com.example.spring_tutorial02.service.UserService;
+import com.example.spring_tutorial02.form.UserRegisterForm;
+
 
 @Controller
 public class AdminUserController {
@@ -29,27 +30,31 @@ public class AdminUserController {
         // 上記で指定した「users」をviewsの「users」に渡すと指定。
         model.addAttribute("users", users);
 
+        // 既にインスタンスが存在する場合は行わない。
+        if(!model.containsAttribute("userRegisterForm")){
+            model.addAttribute("userRegisterForm", new UserRegisterForm());
+        }
+
         return "adminUserView";
     }
 
     @PostMapping("/register")
     public String registerUser(RedirectAttributes redirectAttributes,
-        @RequestParam("user_name") String userName,
-        @RequestParam("password") String password,
-        @RequestParam("role_id") int roleId) {
+        UserRegisterForm form){
 
         try{
-            userService.createUser(userName, password, roleId);
+            userService.createUser(form.userName(), form.password, form.roleId);
+            // userService.createUser(userName, password, roleId);
 
             redirectAttributes.addFlashAttribute("successMessage", "ユーザー登録が完了しました");
         } catch (IllegalArgumentException e){
             redirectAttributes.addFlashAttribute("failureMessage", e.getMessage());
 
-            redirectAttributes.addFlashAttribute("userName", userName);
-            redirectAttributes.addFlashAttribute("roleId", roleId);
+            redirectAttributes.addFlashAttribute("userRegisterForm", form);
+            // redirectAttributes.addFlashAttribute("userName", userName);
+            // redirectAttributes.addFlashAttribute("roleId", roleId);
         }
 
         return "redirect:/adminuser";
-
     }
 }
